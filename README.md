@@ -1,0 +1,109 @@
+# IP ASN Lookup API
+
+Simple API for looking up ASN data by IP address.
+
+## Why Python (for this project)
+
+- Fast delivery: minimal code with Python standard library.
+- Networking tasks are straightforward with Python standard library.
+- Easy operational model for small utility APIs.
+
+TypeScript is still a strong choice if your team already standardizes on Node.js and wants shared types with frontend/BFF services.
+
+## Endpoints
+
+- `GET /health`
+- `GET /v1/asn/lookup?ip=8.8.8.8`
+- `POST /v1/asn/lookup-batch`
+
+### Example response
+
+```json
+{
+  "ip": "8.8.8.8",
+  "asn": 15169,
+  "bgp_prefix": "8.8.8.0/24",
+  "country_code": "US",
+  "registry": "arin",
+  "allocated_date": "1992-12-01",
+  "as_name": "GOOGLE, US",
+  "source": "team-cymru-whois"
+}
+```
+
+## Run locally
+
+```bash
+python3 app/main.py
+```
+
+Or:
+
+```bash
+make run
+```
+
+## Rate limit (no API key)
+
+- Enabled by default: `60` requests / `60` seconds per client IP
+- Response when exceeded: HTTP `429` + `Retry-After` header
+- Disable by setting:
+  - `RATE_LIMIT_REQUESTS=0`
+
+Example:
+
+```bash
+RATE_LIMIT_REQUESTS=120 RATE_LIMIT_WINDOW_SEC=60 python3 app/main.py
+```
+
+## Run with Docker
+
+```bash
+docker compose up --build
+```
+
+Or:
+
+```bash
+make docker-up
+```
+
+Then call:
+
+```bash
+curl "http://localhost:8000/v1/asn/lookup?ip=8.8.8.8"
+```
+
+## Quick load test (verify rate limit)
+
+Run server first, then:
+
+```bash
+python3 scripts/load_test.py --requests 200 --concurrency 40
+```
+
+Or:
+
+```bash
+make loadtest
+```
+
+If rate limit is active, you should see some `429` in status counts.
+
+You can also output JSON:
+
+```bash
+python3 scripts/load_test.py --requests 200 --concurrency 40 --json
+```
+
+## Test
+
+```bash
+python3 -m unittest discover -s tests -q
+```
+
+Or:
+
+```bash
+make test
+```

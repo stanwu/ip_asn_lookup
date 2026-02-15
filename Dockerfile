@@ -1,0 +1,14 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY app ./app
+
+ENV HOST=0.0.0.0
+ENV PORT=8000
+ENV RATE_LIMIT_REQUESTS=60
+ENV RATE_LIMIT_WINDOW_SEC=60
+
+EXPOSE 8000
+
+CMD ["python3", "app/main.py"]
