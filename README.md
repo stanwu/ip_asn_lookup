@@ -108,6 +108,22 @@ Or:
 make test
 ```
 
+## Secret scan before push
+
+Enable local `pre-push` hook:
+
+```bash
+make install-hooks
+```
+
+Manual scan:
+
+```bash
+make secret-scan
+```
+
+CI also runs secret scanning on `push` and PR `synchronize`.
+
 ## License
 
 - MIT (see `LICENSE`)

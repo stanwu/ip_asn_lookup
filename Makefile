@@ -13,7 +13,7 @@ LOADTEST_CONCURRENCY ?= 40
 LOADTEST_IP ?= 8.8.8.8
 BASE_URL ?= http://127.0.0.1:8000
 
-.PHONY: run test test-unit test-curl loadtest docker-up docker-down
+.PHONY: run test test-unit test-curl loadtest docker-up docker-down secret-scan install-hooks
 
 run:
 	HOST=$(HOST) \
@@ -26,6 +26,9 @@ test: test-unit test-curl
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -q
+
+secret-scan:
+	$(PYTHON) scripts/secret_scan.py
 
 test-curl:
 	@set -e; \
@@ -55,3 +58,8 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+install-hooks:
+	mkdir -p .git/hooks
+	cp .githooks/pre-push .git/hooks/pre-push
+	chmod +x .git/hooks/pre-push
